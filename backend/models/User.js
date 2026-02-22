@@ -1,6 +1,33 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
+const lawyerProfileSchema = new mongoose.Schema(
+  {
+    barLicenseNumber: {
+      type: String,
+      trim: true,
+    },
+    yearsOfExperience: {
+      type: Number,
+      min: 0,
+      max: 60,
+    },
+    specialization: {
+      type: [String],
+      default: [],
+    },
+    officeLocation: {
+      type: String,
+      trim: true,
+    },
+    bio: {
+      type: String,
+      trim: true,
+    },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -21,30 +48,15 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['client', 'lawyer', 'admin'],
+      enum: ['client', 'lawyer'],
       default: 'client',
     },
     phone: {
       type: String,
+      required: true,
       trim: true,
     },
-    // Lawyer-specific fields
-    barId: {
-      type: String,
-      sparse: true,
-    },
-    practiceAreas: {
-      type: [String],
-      default: [],
-    },
-    yearsExperience: {
-      type: Number,
-      min: 0,
-    },
-    isApproved: {
-      type: Boolean,
-      default: false,
-    },
+    lawyerProfile: lawyerProfileSchema,
   },
   { timestamps: true }
 );

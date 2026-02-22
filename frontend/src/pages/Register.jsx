@@ -76,7 +76,7 @@ function Register() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
           <div className="flex flex-col lg:flex-row">
             {/* Left Side - Form */}
@@ -85,7 +85,7 @@ function Register() {
               <div className="mb-8">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-3xl">⚖️</span>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     LawLinkPro
                   </h1>
                 </div>
@@ -237,7 +237,7 @@ function Register() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full py-3 px-4 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {loading ? 'Creating Account...' : 'Create Account'}
                   </button>
@@ -256,7 +256,7 @@ function Register() {
             </div>
 
             {/* Right Side - Info Panel */}
-            <div className="w-full lg:w-2/5 bg-gradient-to-br from-blue-600 to-purple-700 p-8 md:p-12 text-white flex flex-col justify-center">
+            <div className="w-full lg:w-2/5 bg-linear-to-br from-blue-600 to-purple-700 p-8 md:p-12 text-white flex flex-col justify-center">
               <div className="space-y-6">
                 <div>
                   <h3 className="text-2xl font-bold mb-4">Why Join LawLinkPro?</h3>
@@ -264,7 +264,7 @@ function Register() {
 
                 <ul className="space-y-4">
                   <li className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <span className="text-lg">📋</span>
                     </div>
                     <div>
@@ -273,7 +273,7 @@ function Register() {
                   </li>
 
                   <li className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <span className="text-lg">💬</span>
                     </div>
                     <div>
@@ -282,7 +282,7 @@ function Register() {
                   </li>
 
                   <li className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <span className="text-lg">📚</span>
                     </div>
                     <div>
@@ -291,7 +291,7 @@ function Register() {
                   </li>
 
                   <li className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <span className="text-lg">⚖️</span>
                     </div>
                     <div>
@@ -300,7 +300,7 @@ function Register() {
                   </li>
 
                   <li className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <div className="shrink-0 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <span className="text-lg">📱</span>
                     </div>
                     <div>

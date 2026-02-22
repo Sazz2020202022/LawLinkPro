@@ -1,5 +1,35 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import authService from '../services/authService';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const AUTH_BASE_PATH = /\/api$/i.test(API_BASE_URL) ? '/auth' : '/api/auth';
+
+const parseApiError = (error, fallbackMessage) => {
+  return error?.response?.data?.message || error?.message || fallbackMessage;
+};
+
+const isTokenValid = (token) => {
+  if (!token || typeof token !== 'string') {
+    return false;
+  }
+
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return false;
+  }
+
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+    const payload = JSON.parse(atob(padded));
+    if (typeof payload?.exp !== 'number') {
+      return true;
+    }
+    return payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
 
 const AuthContext = createContext();
 
@@ -15,53 +45,105 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const authApi = useMemo(() => {
+    const instance = axios.create({
+      baseURL: API_BASE_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    instance.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    instance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error?.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return instance;
+  }, []);
+
   useEffect(() => {
-    // Check if user is logged in on mount
-    const currentUser = authService.getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
+    const token = localStorage.getItem('token');
+    const currentUser = localStorage.getItem('user');
+
+    if (!token || !isTokenValid(token)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setLoading(false);
+      return;
     }
+
+    if (currentUser) {
+      try {
+        setUser(JSON.parse(currentUser));
+      } catch {
+        localStorage.removeItem('user');
+        setUser(null);
+      }
+    }
+
     setLoading(false);
   }, []);
 
   const login = async (credentials) => {
     try {
-      const response = await authService.login(credentials);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      setUser(response.user);
-      return response;
+      const { data } = await authApi.post(`${AUTH_BASE_PATH}/login`, credentials);
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
+      if (data?.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user);
+      }
+      return data;
     } catch (error) {
-      throw error;
+      throw new Error(parseApiError(error, 'Login failed. Please try again.'));
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const { data } = await authApi.post(`${AUTH_BASE_PATH}/register`, userData);
+      if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
+      if (data?.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user);
+      }
+      return data;
+    } catch (error) {
+      throw new Error(parseApiError(error, 'Registration failed. Please try again.'));
     }
   };
 
   const registerClient = async (userData) => {
-    try {
-      const response = await authService.registerClient(userData);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      setUser(response.user);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return register({ ...userData, role: 'client' });
   };
 
   const registerLawyer = async (userData) => {
-    try {
-      const response = await authService.registerLawyer(userData);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      setUser(response.user);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return register({ ...userData, role: 'lawyer' });
   };
 
   const logout = () => {
-    authService.logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
@@ -69,10 +151,11 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     login,
+    register,
     registerClient,
     registerLawyer,
     logout,
-    isAuthenticated: authService.isAuthenticated(),
+    isAuthenticated: !!user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
