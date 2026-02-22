@@ -1,10 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MapPin, Briefcase, SlidersHorizontal, Star, Award, Send } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { lawyers, SPECIALIZATION_OPTIONS, LOCATION_OPTIONS } from '../data/lawyers';
 
 const SORT_OPTIONS = ['Match Score', 'Rating', 'Experience'];
+const MAX_VISIBLE_LAWYERS = 8;
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const LAWYERS_ENDPOINT = /\/api$/i.test(API_BASE_URL)
+  ? `${API_BASE_URL}/lawyers`
+  : `${API_BASE_URL}/api/lawyers`;
 
 const filterLawyers = ({ list, searchTerm, specialization, location, sortBy }) => {
   const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -35,14 +39,67 @@ function FindLawyers() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
 
+  const [lawyers, setLawyers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [specialization, setSpecialization] = useState('');
   const [location, setLocation] = useState('');
   const [sortBy, setSortBy] = useState('Match Score');
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadLawyers = async () => {
+      try {
+        setIsLoading(true);
+        setLoadError('');
+
+        const response = await fetch(LAWYERS_ENDPOINT, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch lawyers');
+        }
+
+        const data = await response.json();
+        setLawyers(Array.isArray(data?.lawyers) ? data.lawyers : []);
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          return;
+        }
+        setLoadError('Unable to load lawyers right now. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLawyers();
+
+    return () => controller.abort();
+  }, []);
+
+  const specializationOptions = useMemo(() => {
+    return Array.from(new Set(lawyers.flatMap((lawyer) => lawyer.specialization || []))).sort((a, b) =>
+      a.localeCompare(b)
+    );
+  }, [lawyers]);
+
+  const locationOptions = useMemo(() => {
+    return Array.from(new Set(lawyers.map((lawyer) => lawyer.location).filter(Boolean))).sort((a, b) =>
+      a.localeCompare(b)
+    );
+  }, [lawyers]);
+
   const filteredLawyers = useMemo(
     () => filterLawyers({ list: lawyers, searchTerm, specialization, location, sortBy }),
-    [searchTerm, specialization, location, sortBy]
+    [lawyers, searchTerm, specialization, location, sortBy]
+  );
+
+  const visibleLawyers = useMemo(
+    () => filteredLawyers.slice(0, MAX_VISIBLE_LAWYERS),
+    [filteredLawyers]
   );
 
   const handleConnect = (lawyerName) => {
@@ -88,7 +145,7 @@ function FindLawyers() {
               className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Specializations</option>
-              {SPECIALIZATION_OPTIONS.map((item) => (
+              {specializationOptions.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
@@ -101,7 +158,7 @@ function FindLawyers() {
               className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Locations</option>
-              {LOCATION_OPTIONS.map((item) => (
+              {locationOptions.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
@@ -122,13 +179,17 @@ function FindLawyers() {
           </div>
         </section>
 
-        {filteredLawyers.length === 0 ? (
+        {isLoading ? (
+          <div className="bg-white rounded-xl shadow-sm p-10 text-center text-gray-600">Loading lawyers...</div>
+        ) : loadError ? (
+          <div className="bg-white rounded-xl shadow-sm p-10 text-center text-red-600">{loadError}</div>
+        ) : filteredLawyers.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-10 text-center text-gray-600">
             No results found
           </div>
         ) : (
           <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {filteredLawyers.map((lawyer) => (
+            {visibleLawyers.map((lawyer) => (
               <article
                 key={lawyer.id}
                 className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-5 flex flex-col"
@@ -153,7 +214,7 @@ function FindLawyers() {
                 <div className="mt-4 text-sm text-gray-600 space-y-1">
                   <p>📍 {lawyer.location}</p>
                   <p>🧭 {lawyer.yearsExperience} years experience</p>
-                  <p>⭐ {lawyer.rating.toFixed(1)} / 5</p>
+                  <p>⭐ {Number(lawyer.rating || 0).toFixed(1)} / 5</p>
                 </div>
 
                 <div className="mt-5 flex gap-2">

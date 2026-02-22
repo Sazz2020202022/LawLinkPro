@@ -8,15 +8,21 @@ import Login from './pages/Login'
 import Signup from './pages/auth/Signup'
 import FindLawyers from './pages/FindLawyers'
 import LawyerPublicProfile from './pages/LawyerPublicProfile'
-import LawyerDashboard from './pages/LawyerDashboard'
+import LawyerDashboard from './pages/lawyer/LawyerDashboard'
+import LawyerRequests from './pages/lawyer/Requests'
+import LawyerCases from './pages/lawyer/Cases'
+import LawyerFeedback from './pages/lawyer/Feedback'
+import LawyerProfile from './pages/lawyer/Profile'
 import ClientProtectedRoute from './components/ClientProtectedRoute'
 import LawyerProtectedRoute from './components/LawyerProtectedRoute'
 import ClientLayout from './layouts/ClientLayout'
+import LawyerLayout from './layouts/LawyerLayout'
 import ClientDashboard from './pages/client/ClientDashboard'
 import ClientProfile from './pages/client/ClientProfile'
 import NewCase from './pages/client/NewCase'
 import MyCases from './pages/client/MyCases'
 import Requests from './pages/client/Requests'
+import Recommendations from './pages/client/Recommendations'
 
 function App() {
   return (
@@ -50,18 +56,25 @@ function App() {
             <Route path="profile" element={<ClientProfile />} />
             <Route path="new-case" element={<NewCase />} />
             <Route path="cases" element={<MyCases />} />
+            <Route path="cases/:id/recommendations" element={<Recommendations />} />
             <Route path="requests" element={<Requests />} />
           </Route>
 
-          {/* Lawyer Routes */}
+          {/* Lawyer Protected Routes */}
           <Route
-            path="/lawyer/dashboard"
+            path="/lawyer"
             element={
               <LawyerProtectedRoute>
-                <LawyerDashboard />
+                <LawyerLayout />
               </LawyerProtectedRoute>
             }
-          />
+          >
+            <Route path="dashboard" element={<LawyerDashboard />} />
+            <Route path="requests" element={<LawyerRequests />} />
+            <Route path="cases" element={<LawyerCases />} />
+            <Route path="profile" element={<LawyerProfile />} />
+            <Route path="feedback" element={<LawyerFeedback />} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>

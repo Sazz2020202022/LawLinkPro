@@ -1,13 +1,60 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { lawyers } from '../data/lawyers';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const LAWYERS_ENDPOINT = /\/api$/i.test(API_BASE_URL)
+  ? `${API_BASE_URL}/lawyers`
+  : `${API_BASE_URL}/api/lawyers`;
 
 function LawyerPublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+  const [lawyer, setLawyer] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const lawyer = lawyers.find((item) => item.id === id);
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadLawyer = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(`${LAWYERS_ENDPOINT}/${id}`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          setLawyer(null);
+          return;
+        }
+
+        const data = await response.json();
+        setLawyer(data?.lawyer || null);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setLawyer(null);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLawyer();
+
+    return () => controller.abort();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-600">Loading lawyer...</div>
+        </div>
+      </div>
+    );
+  }
 
   if (!lawyer) {
     return (
@@ -59,7 +106,7 @@ function LawyerPublicProfile() {
           <div className="mt-5 grid sm:grid-cols-3 gap-3 text-sm text-gray-700">
             <div className="rounded-lg bg-gray-50 px-4 py-3">📍 {lawyer.location}</div>
             <div className="rounded-lg bg-gray-50 px-4 py-3">🧭 {lawyer.yearsExperience} years experience</div>
-            <div className="rounded-lg bg-gray-50 px-4 py-3">⭐ {lawyer.rating.toFixed(1)} / 5</div>
+            <div className="rounded-lg bg-gray-50 px-4 py-3">⭐ {Number(lawyer.rating || 0).toFixed(1)} / 5</div>
           </div>
 
           <button
@@ -74,11 +121,14 @@ function LawyerPublicProfile() {
         <section className="bg-white rounded-xl shadow-sm p-6 md:p-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Client Reviews</h2>
           <ul className="space-y-3">
-            {lawyer.reviews.slice(0, 3).map((review) => (
+            {(lawyer.reviews || []).slice(0, 3).map((review) => (
               <li key={review} className="rounded-lg bg-gray-50 p-4 text-sm text-gray-700">
                 “{review}”
               </li>
             ))}
+            {(lawyer.reviews || []).length === 0 && (
+              <li className="rounded-lg bg-gray-50 p-4 text-sm text-gray-700">No public reviews yet.</li>
+            )}
           </ul>
         </section>
       </main>

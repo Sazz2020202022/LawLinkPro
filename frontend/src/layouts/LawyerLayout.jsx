@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, FilePlus, FolderOpen, Inbox, User } from 'lucide-react';
+import { LayoutDashboard, Inbox, FolderOpen, MessageSquare, User } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const navItems = [
-  { to: '/client/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/client/new-case', label: 'New Case', icon: FilePlus },
-  { to: '/client/cases', label: 'My Cases', icon: FolderOpen },
-  { to: '/client/requests', label: 'Requests', icon: Inbox },
-  { to: '/client/profile', label: 'Profile', icon: User },
+  { to: '/lawyer/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/lawyer/requests', label: 'Requests', icon: Inbox },
+  { to: '/lawyer/cases', label: 'Active Cases', icon: FolderOpen },
+  { to: '/lawyer/feedback', label: 'Feedback', icon: MessageSquare },
+  { to: '/lawyer/profile', label: 'Profile', icon: User },
 ];
 
-function ClientLayout() {
+function LawyerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -34,7 +34,7 @@ function ClientLayout() {
             className={`${sidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-64 bg-white rounded-xl shadow-sm p-4 h-fit`}
           >
             <div className="mb-4 px-2">
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Client Panel</h2>
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Lawyer Panel</h2>
             </div>
             <nav className="space-y-1">
               {navItems.map((item) => {
@@ -64,9 +64,9 @@ function ClientLayout() {
             <div className="mb-4 bg-white rounded-xl shadow-sm p-4">
               <div className="flex items-center justify-between">
                 <h1 className="text-lg font-semibold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Client Workspace
+                  Lawyer Workspace
                 </h1>
-                <Link to="/client/dashboard" className="text-sm text-blue-600 hover:text-blue-700">
+                <Link to="/lawyer/dashboard" className="text-sm text-blue-600 hover:text-blue-700">
                   Overview
                 </Link>
               </div>
@@ -79,4 +79,4 @@ function ClientLayout() {
   );
 }
 
-export default ClientLayout;
+export default LawyerLayout;

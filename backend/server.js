@@ -3,6 +3,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import lawyerRoutes from './routes/lawyerRoutes.js';
+import caseRoutes from './routes/caseRoutes.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
+import requestRoutes from './routes/requestRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +28,11 @@ app.use(
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/lawyers', lawyerRoutes);
+app.use('/api/cases', caseRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/requests', requestRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

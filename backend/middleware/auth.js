@@ -14,7 +14,7 @@ export const authenticate = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = {
-      id: decoded.userId,
+      id: decoded.id || decoded.userId,
       role: decoded.role,
     };
 
@@ -37,4 +37,30 @@ export const authorize = (rolesArray) => {
 
     next();
   };
+};
+
+// Middleware to ensure user is a client
+export const clientOnly = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  if (req.user.role !== 'client') {
+    return res.status(403).json({ message: 'This action is for clients only' });
+  }
+
+  next();
+};
+
+// Middleware to ensure user is a lawyer
+export const lawyerOnly = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  if (req.user.role !== 'lawyer') {
+    return res.status(403).json({ message: 'This action is for lawyers only' });
+  }
+
+  next();
 };
