@@ -25,7 +25,25 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const createCase = async (payload) => {
+export const createCase = async (payload, file) => {
+  if (file) {
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        formData.append(key, value);
+      }
+    });
+    formData.append('document', file);
+
+    const { data } = await api.post(buildApiPath('/cases'), formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return data;
+  }
+
   const { data } = await api.post(buildApiPath('/cases'), payload);
   return data;
 };
@@ -37,6 +55,19 @@ export const getMyCases = async () => {
 
 export const getCaseById = async (id) => {
   const { data } = await api.get(buildApiPath(`/cases/${id}`));
+  return data;
+};
+
+export const uploadCaseDocument = async (id, file) => {
+  const formData = new FormData();
+  formData.append('document', file);
+
+  const { data } = await api.post(buildApiPath(`/cases/${id}/documents`), formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
   return data;
 };
 
@@ -62,6 +93,76 @@ export const getLawyerRequests = async () => {
 
 export const updateRequestStatus = async (id, status) => {
   const { data } = await api.patch(buildApiPath(`/requests/${id}`), { status });
+  return data;
+};
+
+export const getClientProfile = async () => {
+  const { data } = await api.get(buildApiPath('/client/profile'));
+  return data;
+};
+
+export const updateClientProfile = async (payload) => {
+  const { data } = await api.patch(buildApiPath('/client/profile'), payload);
+  return data;
+};
+
+export const getClientProfileCompletion = async () => {
+  const { data } = await api.get(buildApiPath('/client/profile/completion'));
+  return data;
+};
+
+export const getMessages = async (requestId) => {
+  const { data } = await api.get(buildApiPath(`/messages/${requestId}`));
+  return data;
+};
+
+export const sendMessage = async (requestId, payload) => {
+  const { data } = await api.post(buildApiPath(`/messages/${requestId}`), payload);
+  return data;
+};
+
+export const sendMessageAttachment = async (requestId, files, text = '') => {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append('attachments', file);
+  });
+
+  if (text) {
+    formData.append('text', text);
+  }
+
+  const { data } = await api.post(buildApiPath(`/messages/${requestId}/attachment`), formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return data;
+};
+
+export const markMessagesRead = async (requestId) => {
+  const { data } = await api.patch(buildApiPath(`/messages/${requestId}/read`));
+  return data;
+};
+
+export const updateLawyerAvailability = async (availability) => {
+  const { data } = await api.patch(buildApiPath('/lawyers/profile/availability'), { availability });
+  return data;
+};
+
+export const getLawyerDashboardMetrics = async () => {
+  const { data } = await api.get(buildApiPath('/lawyers/dashboard/metrics'));
+  return data;
+};
+
+export const getLawyers = async () => {
+  const { data } = await api.get(buildApiPath('/lawyers'));
+  return data;
+};
+
+export const getClientProfileForLawyer = async (clientId) => {
+  const { data } = await api.get(buildApiPath(`/lawyers/clients/${clientId}`));
   return data;
 };
 

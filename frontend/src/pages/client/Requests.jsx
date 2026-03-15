@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getClientRequests } from '../../services/api';
 
 const statusStyles = {
@@ -53,37 +54,42 @@ function Requests() {
       {requests.length === 0 ? (
         <p className="mt-6 text-gray-600">No requests yet. Create a case and find lawyers to get started.</p>
       ) : (
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Case Title</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Lawyer</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.map((request) => (
-                <tr key={request._id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-sm text-gray-900">{request.case?.title || 'N/A'}</td>
-                  <td className="py-4 px-4 text-sm text-gray-900">{request.lawyer?.fullName || 'N/A'}</td>
-                  <td className="py-4 px-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                        statusStyles[request.status] || 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4 text-sm text-gray-600">
-                    {new Date(request.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-6 grid grid-cols-1 gap-4">
+          {requests.map((request) => (
+            <article key={request._id} className="rounded-xl border border-gray-200 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm text-gray-500">Case</p>
+                  <h3 className="text-base font-semibold text-gray-900">{request.case?.title || 'N/A'}</h3>
+                </div>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
+                    statusStyles[request.status] || 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                </span>
+              </div>
+
+              <p className="mt-2 text-sm text-gray-700">
+                <span className="font-medium">Lawyer:</span> {request.lawyer?.fullName || 'N/A'}
+              </p>
+              <p className="mt-1 text-sm text-gray-500">
+                Requested on {new Date(request.createdAt).toLocaleDateString()}
+              </p>
+
+              {request.status === 'accepted' && (
+                <div className="mt-4">
+                  <Link
+                    to={`/client/requests/${request._id}/messages`}
+                    className="inline-flex px-4 py-2 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    Open Chat
+                  </Link>
+                </div>
+              )}
+            </article>
+          ))}
         </div>
       )}
     </div>

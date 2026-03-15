@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Scale, FolderKanban, MessageSquare, BookOpen, TrendingUp, Clock, Shield, Users, CheckCircle, Award } from 'lucide-react';
+import { Scale, FolderKanban, BookOpen, Clock, Shield, Users, CheckCircle, Award } from 'lucide-react';
 
 function Home() {
   return (
@@ -10,12 +10,12 @@ function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Professional Legal Solutions{' '}
-              <span className="block text-yellow-300 mt-2">At Your Fingertips</span>
+              Legal Support That Is{' '}
+              <span className="block text-yellow-300 mt-2">Clear, Secure, and Practical</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-10">
-              Connect with experienced lawyers, manage your cases efficiently, 
-              and access comprehensive legal resources all in one platform.
+              Find qualified lawyers, share case details in a structured workflow,
+              and follow progress from first request to final outcome in one place.
             </p>
             
             {/* CTA Buttons */}
@@ -39,23 +39,23 @@ function Home() {
               <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-center mb-2">
                   <Users className="w-8 h-8 text-yellow-300 mr-2" />
-                  <div className="text-4xl font-extrabold text-yellow-300">500+</div>
+                  <div className="text-2xl font-extrabold text-yellow-300">Identity Checks</div>
                 </div>
-                <div className="text-blue-100 font-medium text-center">Verified Lawyers</div>
+                <div className="text-blue-100 font-medium text-center">Verified profiles with structured credentials</div>
               </div>
               <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-center mb-2">
                   <FolderKanban className="w-8 h-8 text-yellow-300 mr-2" />
-                  <div className="text-4xl font-extrabold text-yellow-300">10,000+</div>
+                  <div className="text-2xl font-extrabold text-yellow-300">Case Workflow</div>
                 </div>
-                <div className="text-blue-100 font-medium text-center">Cases Handled</div>
+                <div className="text-blue-100 font-medium text-center">Organized requests, updates, and case milestones</div>
               </div>
               <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
                 <div className="flex items-center justify-center mb-2">
                   <Award className="w-8 h-8 text-yellow-300 mr-2" />
-                  <div className="text-4xl font-extrabold text-yellow-300">98%</div>
+                  <div className="text-2xl font-extrabold text-yellow-300">Transparent Choices</div>
                 </div>
-                <div className="text-blue-100 font-medium text-center">Client Satisfaction</div>
+                <div className="text-blue-100 font-medium text-center">Compare experience, ratings, and availability before you connect</div>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@ function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature Card 1 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                 <Scale className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Verified Professionals</h3>
@@ -86,7 +86,7 @@ function Home() {
 
             {/* Feature Card 2 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                 <FolderKanban className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Case Management</h3>
@@ -97,45 +97,45 @@ function Home() {
 
             {/* Feature Card 3 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-linear-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                 <Shield className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Secure Communication</h3>
               <p className="text-gray-600 leading-relaxed">
-                Encrypted messaging system ensures your conversations remain confidential and secure.
+                Built for confidential legal discussions. Keep sensitive details inside secure case channels.
               </p>
             </div>
 
             {/* Feature Card 4 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-linear-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Legal Resources</h3>
               <p className="text-gray-600 leading-relaxed">
-                Access extensive library of legal documents, templates, and educational materials.
+                Understand legal process basics, prepare documents faster, and ask better questions in your first consultation.
               </p>
             </div>
 
             {/* Feature Card 5 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                 <Clock className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">24/7 Access</h3>
               <p className="text-gray-600 leading-relaxed">
-                Manage your legal matters anytime, anywhere from any device with internet access.
+                Access your matter timeline, shared files, and lawyer messages whenever you need them.
               </p>
             </div>
 
             {/* Feature Card 6 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-linear-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Transparent Pricing</h3>
               <p className="text-gray-600 leading-relaxed">
-                No hidden fees. See lawyer rates upfront and choose services that fit your budget.
+                Review fee expectations and service scope early, so decisions are based on clear information.
               </p>
             </div>
           </div>
@@ -159,7 +159,7 @@ function Home() {
               <div className="pt-4">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Create Your Account</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Sign up as a client or lawyer. Complete your profile to get started.
+                  Set up a complete profile so legal matters can be triaged accurately and routed to relevant expertise.
                 </p>
               </div>
             </div>
@@ -172,7 +172,7 @@ function Home() {
               <div className="pt-4">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Connect & Communicate</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Browse lawyers by specialty or get matched. Start secure conversations.
+                  Filter by specialization, location, experience, and availability. Then start a focused, confidential conversation.
                 </p>
               </div>
             </div>
@@ -185,7 +185,7 @@ function Home() {
               <div className="pt-4">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Manage Your Case</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Track progress, share documents, and stay updated on your legal matters.
+                  Track milestones, exchange documents, and keep a reliable record of decisions and next actions.
                 </p>
               </div>
             </div>
@@ -198,7 +198,10 @@ function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl text-blue-100 mb-10">
-            Join thousands of satisfied clients and lawyers using LawLinkPro
+            Get connected with the right legal professional and move your case forward with confidence.
+          </p>
+          <p className="text-sm text-blue-100/90 mb-8 max-w-3xl mx-auto">
+            LawLinkPro is a technology platform, not a law firm. Legal services are provided by independent lawyers.
           </p>
           <Link
             to="/signup"

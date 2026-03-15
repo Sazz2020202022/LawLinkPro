@@ -26,6 +26,15 @@ const requestSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    respondedAt: {
+      type: Date,
+    },
+    acceptedAt: {
+      type: Date,
+    },
+    latestMessageAt: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

@@ -67,9 +67,28 @@ function Navbar() {
     loadNotifications();
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (!isAuthenticated || !isNotificationOpen) {
+      return;
+    }
+
+    const reloadNotifications = async () => {
+      try {
+        const response = await getNotifications();
+        setNotifications(response.notifications || []);
+        setUnreadCount(response.unreadCount || 0);
+      } catch {
+        // Keep current list if refresh fails.
+      }
+    };
+
+    reloadNotifications();
+  }, [isAuthenticated, isNotificationOpen]);
+
   const formatNotificationType = (type) => {
     if (type === 'request_sent') return 'Request Sent';
     if (type === 'request_accepted') return 'Request Accepted';
+    if (type === 'message_received') return 'New Message';
     return 'Notification';
   };
 
@@ -86,6 +105,30 @@ function Navbar() {
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch {
       // Keep UX silent for now to avoid interrupting primary actions
+    }
+  };
+
+  const handleNotificationClick = async (item) => {
+    if (!item) {
+      return;
+    }
+
+    if (!item.read) {
+      await handleMarkRead(item._id);
+    }
+
+    setIsNotificationOpen(false);
+
+    if (item.request) {
+      const requestId = String(item.request);
+      if (user?.role === 'client') {
+        navigate(`/client/requests/${requestId}/messages`);
+        return;
+      }
+
+      if (user?.role === 'lawyer') {
+        navigate(`/lawyer/requests/${requestId}/messages`);
+      }
     }
   };
 
@@ -240,7 +283,14 @@ function Navbar() {
                     <p className="px-4 py-3 text-sm text-gray-600">No notifications yet.</p>
                   ) : (
                     notifications.map((item) => (
-                      <div key={item._id} className={`px-4 py-3 border-b border-gray-50 ${item.read ? 'bg-white' : 'bg-blue-50/40'}`}>
+                      <button
+                        key={item._id}
+                        type="button"
+                        onClick={() => handleNotificationClick(item)}
+                        className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-blue-50/60 transition-colors ${
+                          item.read ? 'bg-white' : 'bg-blue-50/40'
+                        }`}
+                      >
                         <div className="flex items-start justify-between gap-2">
                           <div>
                             <p className="text-xs font-semibold text-blue-700">{formatNotificationType(item.type)}</p>
@@ -251,14 +301,17 @@ function Navbar() {
                           {!item.read && (
                             <button
                               type="button"
-                              onClick={() => handleMarkRead(item._id)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleMarkRead(item._id);
+                              }}
                               className="shrink-0 text-xs text-blue-600 hover:text-blue-700 font-medium"
                             >
                               Mark as read
                             </button>
                           )}
                         </div>
-                      </div>
+                      </button>
                     ))
                   )}
                 </div>

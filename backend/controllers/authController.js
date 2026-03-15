@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { getClientProfileCompletion } from '../utils/profileCompletion.js';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\+?\d{7,15}$/;
@@ -24,6 +25,8 @@ const buildAuthResponse = (user) => {
     { expiresIn: '7d' }
   );
 
+  const clientCompletion = user.role === 'client' ? getClientProfileCompletion(user) : null;
+
   return {
     user: {
       id: user._id,
@@ -31,6 +34,8 @@ const buildAuthResponse = (user) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      ...(user.role === 'client' && { clientProfile: user.clientProfile || {} }),
+      ...(clientCompletion || {}),
       ...(user.role === 'lawyer' && { lawyerProfile: user.lawyerProfile }),
     },
     token,

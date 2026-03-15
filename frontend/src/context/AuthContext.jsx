@@ -147,6 +147,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateCurrentUser = (nextUser) => {
+    setUser(nextUser);
+    localStorage.setItem('user', JSON.stringify(nextUser));
+  };
+
   const value = {
     user,
     loading,
@@ -155,6 +160,7 @@ export const AuthProvider = ({ children }) => {
     registerClient,
     registerLawyer,
     logout,
+    updateCurrentUser,
     isAuthenticated: !!user,
   };
 

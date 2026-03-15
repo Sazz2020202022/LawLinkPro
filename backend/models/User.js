@@ -24,6 +24,45 @@ const lawyerProfileSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Controls whether the lawyer should be prioritized for new client requests.
+    availability: {
+      type: String,
+      enum: ['available', 'busy', 'on_leave'],
+      default: 'available',
+    },
+  },
+  { _id: false }
+);
+
+const clientProfileSchema = new mongoose.Schema(
+  {
+    location: {
+      type: String,
+      trim: true,
+    },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      trim: true,
+    },
+    preferredLanguage: {
+      type: String,
+      trim: true,
+    },
+    bio: {
+      type: String,
+      trim: true,
+    },
+    emergencyContactName: {
+      type: String,
+      trim: true,
+    },
+    emergencyContactPhone: {
+      type: String,
+      trim: true,
+    },
   },
   { _id: false }
 );
@@ -56,6 +95,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    clientProfile: clientProfileSchema,
     lawyerProfile: lawyerProfileSchema,
   },
   { timestamps: true }

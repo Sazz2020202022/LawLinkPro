@@ -1,5 +1,19 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getLawyerRequests, updateRequestStatus } from '../../services/api';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_ORIGIN = /\/api$/i.test(API_BASE_URL) ? API_BASE_URL.replace(/\/api$/i, '') : API_BASE_URL;
+
+const getDocumentUrl = (fileUrl) => {
+  if (!fileUrl) {
+    return '#';
+  }
+  if (/^https?:\/\//i.test(fileUrl)) {
+    return fileUrl;
+  }
+  return `${API_ORIGIN}${fileUrl}`;
+};
 
 const statusStyles = {
   pending: 'bg-yellow-50 text-yellow-700',
@@ -94,10 +108,35 @@ function Requests() {
                     <span className="font-medium">Category:</span> {request.case?.category || 'N/A'}
                   </p>
 
+                  {request.case?.description && (
+                    <p className="mt-2 text-sm text-gray-700 leading-relaxed line-clamp-3">
+                      {request.case.description}
+                    </p>
+                  )}
+
                   {request.message && (
                     <p className="mt-2 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
                       <span className="font-medium">Message:</span> {request.message}
                     </p>
+                  )}
+
+                  {Array.isArray(request.case?.documents) && request.case.documents.length > 0 && (
+                    <div className="mt-3 rounded-lg border border-gray-200 p-3 bg-white">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Case Documents</p>
+                      <div className="mt-2 space-y-1.5">
+                        {request.case.documents.map((doc, index) => (
+                          <a
+                            key={`${doc.fileUrl}-${index}`}
+                            href={getDocumentUrl(doc.fileUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                          >
+                            {doc.fileName}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   <p className="mt-2 text-xs text-gray-500">
@@ -105,26 +144,46 @@ function Requests() {
                   </p>
                 </div>
 
-                {request.status === 'pending' && (
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateStatus(request._id, 'accepted')}
-                      disabled={updating === request._id}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                <div className="flex gap-2">
+                  {request.client?._id && (
+                    <Link
+                      to={`/lawyer/clients/${request.client._id}`}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100"
                     >
-                      {updating === request._id ? 'Updating...' : 'Accept'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateStatus(request._id, 'rejected')}
-                      disabled={updating === request._id}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      View Client Profile
+                    </Link>
+                  )}
+
+                  {request.status === 'pending' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateStatus(request._id, 'accepted')}
+                        disabled={updating === request._id}
+                        className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        {updating === request._id ? 'Updating...' : 'Accept'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateStatus(request._id, 'rejected')}
+                        disabled={updating === request._id}
+                        className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        {updating === request._id ? 'Updating...' : 'Reject'}
+                      </button>
+                    </>
+                  )}
+
+                  {request.status === 'accepted' && (
+                    <Link
+                      to={`/lawyer/requests/${request._id}/messages`}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                     >
-                      {updating === request._id ? 'Updating...' : 'Reject'}
-                    </button>
-                  </div>
-                )}
+                      Open Chat
+                    </Link>
+                  )}
+                </div>
               </div>
             </article>
           ))}

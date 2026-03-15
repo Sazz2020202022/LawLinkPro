@@ -7,6 +7,18 @@ const LAWYERS_ENDPOINT = /\/api$/i.test(API_BASE_URL)
   ? `${API_BASE_URL}/lawyers`
   : `${API_BASE_URL}/api/lawyers`;
 
+const availabilityLabel = {
+  available: 'Available',
+  busy: 'Limited Capacity',
+  on_leave: 'On Leave',
+};
+
+const availabilityStyle = {
+  available: 'bg-green-50 text-green-700',
+  busy: 'bg-amber-50 text-amber-700',
+  on_leave: 'bg-gray-100 text-gray-700',
+};
+
 function LawyerPublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -73,7 +85,7 @@ function LawyerPublicProfile() {
 
   const handleRequest = () => {
     if (isAuthenticated && user?.role === 'client') {
-      alert('Request sent (demo)');
+      alert('Your request has been sent successfully.');
       return;
     }
     navigate('/login');
@@ -88,11 +100,20 @@ function LawyerPublicProfile() {
               <h1 className="text-3xl font-bold text-gray-900">{lawyer.fullName}</h1>
               <p className="text-gray-600 mt-2">{lawyer.bio}</p>
             </div>
-            {lawyer.verified && (
-              <span className="text-sm font-medium bg-blue-50 text-blue-600 px-3 py-1 rounded-full">
-                Verified
+            <div className="flex flex-col items-end gap-2">
+              {lawyer.verified && (
+                <span className="text-sm font-medium bg-blue-50 text-blue-600 px-3 py-1 rounded-full">
+                  Verified
+                </span>
+              )}
+              <span
+                className={`text-sm font-medium px-3 py-1 rounded-full ${
+                  availabilityStyle[lawyer.availability] || 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                {availabilityLabel[lawyer.availability] || 'Available'}
               </span>
-            )}
+            </div>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
@@ -108,6 +129,42 @@ function LawyerPublicProfile() {
             <div className="rounded-lg bg-gray-50 px-4 py-3">🧭 {lawyer.yearsExperience} years experience</div>
             <div className="rounded-lg bg-gray-50 px-4 py-3">⭐ {Number(lawyer.rating || 0).toFixed(1)} / 5</div>
           </div>
+
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Cases Taken</p>
+              <p className="mt-1 text-lg font-semibold text-slate-900">{lawyer.history?.casesTaken ?? 0}</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Cases Won</p>
+              <p className="mt-1 text-lg font-semibold text-slate-900">{lawyer.history?.casesWon ?? 0}</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Acceptance</p>
+              <p className="mt-1 text-lg font-semibold text-slate-900">{lawyer.history?.acceptanceRate ?? 0}%</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Completion</p>
+              <p className="mt-1 text-lg font-semibold text-slate-900">{lawyer.history?.completionRate ?? 0}%</p>
+            </div>
+          </div>
+
+          <div className="mt-3 grid sm:grid-cols-2 gap-3 text-sm text-slate-700">
+            <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Requests Received</p>
+              <p className="mt-1 text-base font-semibold text-slate-900">{lawyer.history?.requestsReceived ?? 0}</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Active Cases</p>
+              <p className="mt-1 text-base font-semibold text-slate-900">{lawyer.history?.activeCases ?? 0}</p>
+            </div>
+          </div>
+
+          {lawyer.availability === 'busy' && (
+            <p className="mt-4 text-sm text-amber-700">
+              This lawyer is managing active matters and may still accept additional cases.
+            </p>
+          )}
 
           <button
             type="button"

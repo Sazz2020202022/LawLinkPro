@@ -6,6 +6,8 @@ import { FolderOpen, X, Award } from 'lucide-react';
 const statusStyles = {
   submitted: 'bg-blue-50 text-blue-700',
   matched: 'bg-purple-50 text-purple-700',
+  request_sent: 'bg-indigo-50 text-indigo-700',
+  accepted: 'bg-emerald-50 text-emerald-700',
   in_progress: 'bg-yellow-50 text-yellow-700',
   completed: 'bg-green-50 text-green-700',
 };
@@ -13,8 +15,21 @@ const statusStyles = {
 const statusLabels = {
   submitted: 'Submitted',
   matched: 'Matched',
+  request_sent: 'Request Sent',
+  accepted: 'Accepted',
   in_progress: 'In Progress',
   completed: 'Completed',
+};
+
+const categoryDetails = {
+  'Family Law': 'Covers divorce, child custody, alimony, and domestic disputes.',
+  'Criminal Law': 'Handles offenses, arrests, bail, criminal defense, and trial matters.',
+  'Property Law': 'Covers land ownership, tenancy issues, title disputes, and transfer matters.',
+  'Corporate Law': 'Handles business contracts, compliance, partnerships, and company disputes.',
+  'Cyber Law': 'Covers online fraud, data privacy, cybercrime, and digital evidence issues.',
+  'Immigration Law': 'Handles visas, permits, residency, deportation, and immigration appeals.',
+  'Labour Law': 'Covers employment contracts, wrongful termination, wages, and workplace rights.',
+  'Tax Law': 'Handles tax notices, filings, penalties, audits, and related legal disputes.',
 };
 
 function MyCases() {
@@ -105,11 +120,11 @@ function MyCases() {
           </Link>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-7 grid grid-cols-1 xl:grid-cols-2 gap-6">
           {cases.map((caseItem) => (
             <article
               key={caseItem._id}
-              className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-all duration-200"
+              className="border border-gray-200 rounded-2xl p-7 min-h-108 hover:shadow-md transition-all duration-200"
             >
               {acceptedLawyerByCase[caseItem._id] && (
                 <div className="mb-3 rounded-lg bg-green-50 border border-green-200 px-3 py-2 text-sm text-green-700">
@@ -132,23 +147,39 @@ function MyCases() {
                 <span className="font-medium">Category:</span> {caseItem.category}
               </p>
 
+              <p className="mt-1 text-sm text-gray-500">
+                {categoryDetails[caseItem.category] || 'General legal matter requiring professional guidance.'}
+              </p>
+
               <p className="mt-2 text-sm text-gray-700 line-clamp-3">{caseItem.description}</p>
 
-              <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <div
+                className={`mt-5 grid gap-3 ${
+                  acceptedLawyerByCase[caseItem._id]
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-1 md:grid-cols-2'
+                }`}
+              >
+                <Link
+                  to={`/client/cases/${caseItem._id}`}
+                  className="h-11 inline-flex items-center justify-center px-4 rounded-lg text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-200"
+                >
+                  Case Detail
+                </Link>
                 <Link
                   to={`/client/cases/${caseItem._id}/recommendations`}
-                  className="flex-1 px-4 py-2 text-center rounded-lg text-sm font-medium text-white bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                  className="h-11 inline-flex items-center justify-center px-4 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
                 >
-                  View Recommendations
+                  Recommendations
                 </Link>
 
                 {acceptedLawyerByCase[caseItem._id] && (
                   <button
                     type="button"
                     onClick={() => setSelectedLawyer(acceptedLawyerByCase[caseItem._id])}
-                    className="flex-1 px-4 py-2 text-center rounded-lg text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-200"
+                    className="h-11 inline-flex items-center justify-center px-4 rounded-lg text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-200 sm:col-span-2"
                   >
-                    View Lawyer Profile
+                    Lawyer Profile
                   </button>
                 )}
               </div>
@@ -184,10 +215,10 @@ function LawyerProfileModal({ lawyer, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all"
+            className="p-3 rounded-xl bg-white/80 hover:bg-white hover:shadow-sm transition-all"
             aria-label="Close"
           >
-            <X className="w-5 h-5 text-gray-600 hover:text-gray-900" />
+            <X className="w-6 h-6 text-gray-600 hover:text-gray-900" />
           </button>
         </div>
 

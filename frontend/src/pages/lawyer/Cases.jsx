@@ -1,6 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Briefcase, Calendar, User } from 'lucide-react';
 import { getLawyerRequests } from '../../services/api';
+
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_ORIGIN = /\/api$/i.test(API_BASE_URL) ? API_BASE_URL.replace(/\/api$/i, '') : API_BASE_URL;
+
+const getDocumentUrl = (fileUrl) => {
+  if (!fileUrl) {
+    return '#';
+  }
+  if (/^https?:\/\//i.test(fileUrl)) {
+    return fileUrl;
+  }
+  return `${API_ORIGIN}${fileUrl}`;
+};
 
 function Cases() {
   const [loading, setLoading] = useState(true);
@@ -91,11 +105,40 @@ function Cases() {
                       Accepted on {new Date(request.updatedAt || request.createdAt).toLocaleDateString()}
                     </span>
                   </div>
+
+                  {Array.isArray(request.case?.documents) && request.case.documents.length > 0 && (
+                    <div className="mt-4 rounded-lg border border-gray-200 p-3 bg-white">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Documents</p>
+                      <div className="mt-2 space-y-1.5">
+                        {request.case.documents.map((doc, index) => (
+                          <a
+                            key={`${doc.fileUrl}-${index}`}
+                            href={getDocumentUrl(doc.fileUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                          >
+                            {doc.fileName}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <span className="self-start inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">
-                  Active
-                </span>
+                <div className="self-start flex flex-col items-start gap-2">
+                  <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">
+                    Active
+                  </span>
+                  {request.client?._id && (
+                    <Link
+                      to={`/lawyer/clients/${request.client._id}`}
+                      className="inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100"
+                    >
+                      Client Profile
+                    </Link>
+                  )}
+                </div>
               </div>
             </article>
           ))}

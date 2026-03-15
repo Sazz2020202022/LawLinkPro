@@ -45,11 +45,18 @@ export const createRequest = async (req, res) => {
       status: 'pending',
     });
 
+    if (['submitted', 'matched'].includes(caseDoc.status)) {
+      caseDoc.status = 'request_sent';
+      await caseDoc.save();
+    }
+
     await Notification.create({
       recipient: lawyerId,
       type: 'request_sent',
       title: 'New request received',
-      message: `You received a request for case "${caseDoc.title}"`,
+      message: message?.trim()
+        ? `Case "${caseDoc.title}": ${String(message).trim()}`
+        : `You received a request for case "${caseDoc.title}"`,
       request: newRequest._id,
       case: caseDoc._id,
     });
@@ -69,7 +76,7 @@ export const getClientRequests = async (req, res) => {
   try {
     const requests = await Request.find({ client: req.user.id })
       .populate('lawyer', 'fullName email lawyerProfile')
-      .populate('case', 'title category description status')
+      .populate('case', 'title category description status documents')
       .sort({ createdAt: -1 });
 
     return res.status(200).json({ requests });
@@ -83,7 +90,7 @@ export const getLawyerRequests = async (req, res) => {
   try {
     const requests = await Request.find({ lawyer: req.user.id })
       .populate('client', 'fullName email phone')
-      .populate('case', 'title category description status')
+      .populate('case', 'title category description status documents')
       .sort({ createdAt: -1 });
 
     return res.status(200).json({ requests });
@@ -113,10 +120,14 @@ export const updateRequestStatus = async (req, res) => {
     }
 
     request.status = status;
+    request.respondedAt = new Date();
+    request.acceptedAt = status === 'accepted' ? new Date() : request.acceptedAt;
     await request.save();
 
     if (status === 'accepted') {
       const relatedCase = await Case.findById(request.case).select('title').lean();
+
+      await Case.findByIdAndUpdate(request.case, { status: 'accepted' });
 
       await Notification.create({
         recipient: request.client,

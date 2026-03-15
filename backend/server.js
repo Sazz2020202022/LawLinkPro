@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import lawyerRoutes from './routes/lawyerRoutes.js';
@@ -8,11 +10,15 @@ import caseRoutes from './routes/caseRoutes.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
 import requestRoutes from './routes/requestRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import clientRoutes from './routes/clientRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Connect to MongoDB
 connectDB();
@@ -25,6 +31,7 @@ app.use(
     credentials: true,
   })
 );
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -33,6 +40,8 @@ app.use('/api/cases', caseRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/client', clientRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -46,6 +55,14 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
+  if (err?.name === 'MulterError') {
+    return res.status(400).json({ message: err.message });
+  }
+
+  if (err?.message?.includes('Only pdf, doc, docx, jpg, and png files are allowed')) {
+    return res.status(400).json({ message: err.message });
+  }
+
   console.error(err);
   res.status(500).json({ message: 'Server error' });
 });

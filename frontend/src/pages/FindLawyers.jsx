@@ -35,6 +35,18 @@ const filterLawyers = ({ list, searchTerm, specialization, location, sortBy }) =
   return filtered;
 };
 
+const availabilityLabel = {
+  available: 'Available',
+  busy: 'Limited Capacity',
+  on_leave: 'On Leave',
+};
+
+const availabilityStyle = {
+  available: 'bg-green-50 text-green-700',
+  busy: 'bg-amber-50 text-amber-700',
+  on_leave: 'bg-gray-100 text-gray-700',
+};
+
 function FindLawyers() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
@@ -104,7 +116,7 @@ function FindLawyers() {
 
   const handleConnect = (lawyerName) => {
     if (isAuthenticated && user?.role === 'client') {
-      alert(`Request sent to ${lawyerName} (demo)`);
+      alert(`Your request has been sent to ${lawyerName}.`);
       return;
     }
     navigate('/login');
@@ -196,11 +208,20 @@ function FindLawyers() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="text-lg font-semibold text-gray-900">{lawyer.fullName}</h3>
-                  {lawyer.verified && (
-                    <span className="text-xs font-medium bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
-                      Verified
+                  <div className="flex flex-col items-end gap-1">
+                    {lawyer.verified && (
+                      <span className="text-xs font-medium bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
+                        Verified
+                      </span>
+                    )}
+                    <span
+                      className={`text-xs font-medium px-2 py-1 rounded-full ${
+                        availabilityStyle[lawyer.availability] || 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {availabilityLabel[lawyer.availability] || 'Available'}
                     </span>
-                  )}
+                  </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -215,6 +236,12 @@ function FindLawyers() {
                   <p>📍 {lawyer.location}</p>
                   <p>🧭 {lawyer.yearsExperience} years experience</p>
                   <p>⭐ {Number(lawyer.rating || 0).toFixed(1)} / 5</p>
+                  <p>🏛️ Cases Taken: {lawyer.history?.casesTaken ?? 0}</p>
+                  <p>✅ Cases Won: {lawyer.history?.casesWon ?? 0}</p>
+                  <p>📈 Completion: {lawyer.history?.completionRate ?? 0}%</p>
+                  {lawyer.availability === 'busy' && (
+                    <p className="text-amber-700">Managing active matters and still open to suitable new cases.</p>
+                  )}
                 </div>
 
                 <div className="mt-5 flex gap-2">

@@ -10,7 +10,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['request_sent', 'request_accepted'],
+      enum: ['request_sent', 'request_accepted', 'message_received'],
       required: true,
     },
     title: {

@@ -75,14 +75,14 @@ function Contact() {
             Contact Us
           </h1>
           <p className="text-gray-600 mt-3 max-w-2xl">
-            We’re here to help with support, partnerships, and general inquiries.
+            Contact us for product support, account issues, partnerships, or guidance on where to start.
           </p>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <article className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-1">Send us a message</h2>
-            <p className="text-sm text-gray-500 mb-6">We usually respond within one business day.</p>
+            <p className="text-sm text-gray-500 mb-6">We usually respond within one business day with next steps.</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -228,7 +228,7 @@ function Contact() {
                 </p>
               </div>
               <p className="mt-4 text-xs text-gray-500 bg-blue-50 rounded-lg px-3 py-2 border border-blue-100">
-                We respect your privacy; your message is confidential.
+                We treat all inquiries as confidential. Please avoid sharing passwords or payment information.
               </p>
             </article>
 
@@ -237,11 +237,11 @@ function Contact() {
               <div className="space-y-3">
                 <div className="rounded-xl bg-gray-50 p-4 hover:shadow-sm transition-all">
                   <p className="font-medium text-gray-900">How does AI matching work?</p>
-                  <p className="text-sm text-gray-600 mt-1">We use your case details to recommend relevant verified lawyers.</p>
+                  <p className="text-sm text-gray-600 mt-1">We compare your case details with lawyer expertise data and rank likely matches.</p>
                 </div>
                 <div className="rounded-xl bg-gray-50 p-4 hover:shadow-sm transition-all">
                   <p className="font-medium text-gray-900">Are lawyers verified?</p>
-                  <p className="text-sm text-gray-600 mt-1">Yes, profiles are screened before being marked verified.</p>
+                  <p className="text-sm text-gray-600 mt-1">Yes. Profiles include structured credentials and verification checks before display.</p>
                 </div>
                 <div className="rounded-xl bg-gray-50 p-4 hover:shadow-sm transition-all">
                   <p className="font-medium text-gray-900">How do I submit a case?</p>
@@ -249,7 +249,13 @@ function Contact() {
                 </div>
                 <div className="rounded-xl bg-gray-50 p-4 hover:shadow-sm transition-all">
                   <p className="font-medium text-gray-900">Is my data secure?</p>
-                  <p className="text-sm text-gray-600 mt-1">Yes, your information is handled securely and shared only as needed.</p>
+                  <p className="text-sm text-gray-600 mt-1">Yes. Access is controlled by role and case details should be shared only with intended parties.</p>
+                </div>
+                <div className="rounded-xl bg-gray-50 p-4 hover:shadow-sm transition-all">
+                  <p className="font-medium text-gray-900">Need free or low-cost legal help?</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Public resources like USA.gov Legal Aid, Legal Services Corporation, and ABA Free Legal Answers can help eligible users find support.
+                  </p>
                 </div>
               </div>
             </article>
